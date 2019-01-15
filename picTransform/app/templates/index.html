@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+    <body>
+        <h3>Please upload your picture :)</h3>
+        <form action="" enctype='multipart/form-data' method='POST'>
+            <input type="file" name="file" style="margin-top:20px;"/>
+            <br>
+            <input type="submit" value="Upload" class="button-new" style="margin-top:15px;"/>
+        </form>
+    </body>
+{% endblock %}
