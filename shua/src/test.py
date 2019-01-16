@@ -74,6 +74,9 @@ size = 64
 batchsize = 680
 
 model = MobileNet(input_shape=(size, size, 1), alpha=1., weights=None, classes=NCATS)
+
+model.load_weights("model.h5")
+
 model.compile(optimizer=Adam(lr=0.002), loss='categorical_crossentropy',
 			  metrics=[categorical_crossentropy, categorical_accuracy, top_3_accuracy])
 print(model.summary())
@@ -141,31 +144,31 @@ callbacks = [
 	ModelCheckpoint('model.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=True,
 					save_weights_only=True),
 ]
-hists = []
-hist = model.fit_generator(
-	train_datagen, steps_per_epoch=STEPS, epochs=70, verbose=1,
-	validation_data=(x_valid, y_valid),
-	callbacks = callbacks
-)
-hists.append(hist)
+# hists = []
+# hist = model.fit_generator(
+# 	train_datagen, steps_per_epoch=STEPS, epochs=70, verbose=1,
+# 	validation_data=(x_valid, y_valid),
+# 	callbacks = callbacks
+# )
+# hists.append(hist)
 
-hist_df = pd.concat([pd.DataFrame(hist.history) for hist in hists], sort=True)
-hist_df.index = np.arange(1, len(hist_df)+1)
-fig, axs = plt.subplots(nrows=2, sharex=True, figsize=(16, 10))
-axs[0].plot(hist_df.val_categorical_accuracy, lw=5, label='Validation Accuracy')
-axs[0].plot(hist_df.categorical_accuracy, lw=5, label='Training Accuracy')
-axs[0].set_ylabel('Accuracy')
-axs[0].set_xlabel('Epoch')
-axs[0].grid()
-axs[0].legend(loc=0)
-axs[1].plot(hist_df.val_categorical_crossentropy, lw=5, label='Validation MLogLoss')
-axs[1].plot(hist_df.categorical_crossentropy, lw=5, label='Training MLogLoss')
-axs[1].set_ylabel('MLogLoss')
-axs[1].set_xlabel('Epoch')
-axs[1].grid()
-axs[1].legend(loc=0)
-fig.savefig('hist.png', dpi=300)
-plt.show();
+# hist_df = pd.concat([pd.DataFrame(hist.history) for hist in hists], sort=True)
+# hist_df.index = np.arange(1, len(hist_df)+1)
+# fig, axs = plt.subplots(nrows=2, sharex=True, figsize=(16, 10))
+# axs[0].plot(hist_df.val_categorical_accuracy, lw=5, label='Validation Accuracy')
+# axs[0].plot(hist_df.categorical_accuracy, lw=5, label='Training Accuracy')
+# axs[0].set_ylabel('Accuracy')
+# axs[0].set_xlabel('Epoch')
+# axs[0].grid()
+# axs[0].legend(loc=0)
+# axs[1].plot(hist_df.val_categorical_crossentropy, lw=5, label='Validation MLogLoss')
+# axs[1].plot(hist_df.categorical_crossentropy, lw=5, label='Training MLogLoss')
+# axs[1].set_ylabel('MLogLoss')
+# axs[1].set_xlabel('Epoch')
+# axs[1].grid()
+# axs[1].legend(loc=0)
+# fig.savefig('hist.png', dpi=300)
+# plt.show();
 
 
 valid_predictions = model.predict(x_valid, batch_size=128, verbose=1)
