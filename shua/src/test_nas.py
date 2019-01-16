@@ -81,7 +81,7 @@ EPOCHS = 16
 size = 64
 batchsize = 680
 
-model = NASNetMobile(input_shape=(size, size, 1), alpha=1., weights=None, classes=NCATS)
+model = NASNetMobile(input_shape=(size, size, 1), weights=None, classes=NCATS)
 # model = keras.applications.nasnet.NASNetMobile(input_shape=(size, size, 1), include_top=True, weights=None, input_tensor=None, pooling=None, classes=NCATS)
 
 model.load_weights("model_nas.h5")
