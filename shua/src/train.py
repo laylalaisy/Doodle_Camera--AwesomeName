@@ -13,9 +13,8 @@ import tensorflow as tf
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
 session = tf.Session(config=config)
-from tensorflow.keras.backend.tensorflow_backend import set_session
+from tensorflow.keras.backend import set_session
 set_session(session)
-
 
 from tensorflow import keras
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
