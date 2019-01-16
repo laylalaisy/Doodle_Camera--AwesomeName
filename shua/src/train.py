@@ -145,7 +145,7 @@ callbacks = [
 ]
 hists = []
 hist = model.fit_generator(
-	train_datagen, steps_per_epoch=STEPS, epochs=2, verbose=1,
+	train_datagen, steps_per_epoch=STEPS, epochs=70, verbose=1,
 	validation_data=(x_valid, y_valid),
 	callbacks = callbacks
 )
