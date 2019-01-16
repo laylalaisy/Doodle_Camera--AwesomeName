@@ -1,3 +1,4 @@
+import os
 import csv
 import numpy as np
 from scipy.spatial import distance
@@ -5,6 +6,18 @@ from scipy.spatial import distance
 
 
 if __name__ == "__main__":
+    log_path = "/home/logs"
+    for root, dirs, files in os.walk(log_path):
+        log_path_dict = dict()
+        for dir_name in dirs:
+            dir_path = os.path.join(root, dir_name)
+            log_path = dir_path + "/public.log"
+            log_path_dict[dir_name] = log_path
+        return log_path_dict
+
+	print(get_log_path_dict())
+
+
 	with open('./dataset/photos/edge_matrix/dog/1.csv','r') as photo_file:
 	    reader = csv.reader(photo_file)
 	    rows= [row for row in reader]
