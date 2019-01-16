@@ -4,7 +4,15 @@ from werkzeug.utils import secure_filename
 import os
 import cv2
 from datetime import timedelta
+import numpy
+
+# import sys
+# sys.path.append('/home/rongxie_sx/AwesomeName/picTransform/app/darknet/python/')
+# import darknet as dn
+
 from .darknet.python import darknet as dn
+#import darknet.python.darknet as dn
+
 
 def detection(image):
     basepath = os.path.dirname(__file__)
@@ -16,12 +24,77 @@ def detection(image):
     res = dn.detect(net, meta, str.encode(basepath+"/static/images/"+image))
     return res
 
-def splitBox(image, x, y, width, height):
-    # basepath = os.path.dirname(__file__)
+def splitOneBox(image, x, y, width, height, order):
+    basepath = os.path.dirname(__file__)
     img = cv2.imread(image)
     cropImg = img[round(y-0.5*height) : round(y+0.5*height), round(x-0.5*width) : round(x+0.5*width)]
-    #cv2.imwrite("test.jpg",cropImg)
-    return cropImg
+    cv2.imwrite(basepath+"/static/images/"+str(order)+".jpg",cropImg)
+
+def splitBox(objectList):
+    print (objectList)
+    basepath = os.path.dirname(__file__)
+    image = basepath + "/static/images/current.jpg"
+    order = 0
+    box = {}
+    order = 0
+    while order < len(objectList):
+        obj = objectList[order]
+        if type(obj[0]) == bytes:
+            category = str(obj[0], encoding="utf-8")
+        else:
+            category = obj[0]
+        confidence = obj[1]
+        x = obj[2][0]
+        y = obj[2][1]
+        width = obj[2][2]
+        height = obj[2][3]
+        if category == 'person':
+            objectList.remove(obj)
+            y1 = y - 7 / 16 * height
+            w1 = height / 8
+            h1 = height / 8
+            y2 = y - 3 / 16 * height
+            w2 = width
+            h2 = height / 8 * 3
+            y3 = y + 0.25 * height
+            w3 = width
+            h3 = height / 2
+            headTuple = (x, y1, w1, h1)
+            bodyTuple = (x, y2, w2, h2)
+            legTuple = (x, y3, w3, h3)
+            head = ['face', 0.9, headTuple]
+            body = ['t-shirt', 0.9, bodyTuple]
+            leg = ['pants', 0.9, legTuple]
+            objectList.append(head)
+            objectList.append(body)
+            objectList.append(leg)
+            
+        else:
+            splitOneBox(image, x, y, width, height, order)
+            box[order] = {}
+            box[order]['path'] = basepath+'/static/images/'+str(order)+'.jpg'
+            box[order]['x'] = x
+            box[order]['y'] = y
+            box[order]['width'] = width
+            box[order]['height'] = height
+            order += 1
+    return (box, objectList)
+
+def joinBox(objectList):
+    basepath = os.path.dirname(__file__)
+    image = basepath + "/static/images/current.jpg"
+    img = cv2.imread(image)
+    emptyImg = numpy.zeros(img.shape, numpy.uint8) + 255
+    order = 0
+    for obj in objectList:
+        x = obj[2][0]
+        y = obj[2][1]
+        width = obj[2][2]
+        height = obj[2][3]
+        subImg = cv2.imread(basepath + "/static/images/" + str(order) + ".jpg")
+        emptyImg[round(y-0.5*height) : round(y+0.5*height), round(x-0.5*width) : round(x+0.5*width)] = subImg
+        cv2.imwrite(basepath+"/static/images/join.jpg", emptyImg)
+        order += 1
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'JPG', 'PNG', 'bmp'])
 def allowed_file(filename):
@@ -44,9 +117,11 @@ def index():
         f.save(upload_path)
         img = cv2.imread(upload_path)
         cv2.imwrite(os.path.join(basepath, 'static/images', 'current.jpg'), img)
-        res = detection('current.jpg')
-        return render_template('index_ok.html', res = res)
+        image = 'current.jpg'
+        res = detection(image)
+        (boxes, objectlist) = splitBox(res)
+        joinBox(objectlist)
+    
+        return render_template('index_ok.html')
  
     return render_template('index.html')
-
-
