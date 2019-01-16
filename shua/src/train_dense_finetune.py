@@ -17,14 +17,17 @@ from tensorflow.keras.backend import set_session
 set_session(session)
 
 from tensorflow import keras
-from tensorflow.keras.layers import Conv2D, MaxPooling2D
-from tensorflow.keras.layers import Dense, Dropout, Flatten, Activation
-from tensorflow.keras.metrics import categorical_accuracy, top_k_categorical_accuracy, categorical_crossentropy
-from keras.models import Model, load_model
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
-from tensorflow.keras.optimizers import Adam
-from keras.layers import Dense, GlobalAveragePooling2D
+
+import pandas as pd
+import seaborn as sns
 from keras.applications.densenet import DenseNet121, preprocess_input
+from keras.callbacks import ReduceLROnPlateau
+from keras.layers import Dense, GlobalAveragePooling2D
+from keras.metrics import (categorical_accuracy, categorical_crossentropy,
+                           top_k_categorical_accuracy)
+from keras.models import Model, load_model
+from keras.optimizers import Adam
+from keras.callbacks import TensorBoard, ModelCheckpoint
 # from tensorflow.keras.applications.nasnet import preprocess_input
 start = dt.datetime.now()
 
