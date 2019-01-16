@@ -17,15 +17,18 @@ from tensorflow.keras.backend import set_session
 set_session(session)
 
 from tensorflow import keras
-from tensorflow.keras.layers import Conv2D, MaxPooling2D
-from tensorflow.keras.layers import Dense, Dropout, Flatten, Activation
-from tensorflow.keras.metrics import categorical_accuracy, top_k_categorical_accuracy, categorical_crossentropy
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.applications import MobileNet, NASNetMobile
-from tensorflow.keras.applications.nasnet import preprocess_input
-# from tensorflow.keras.applications.mobilenet import preprocess_input
+
+import pandas as pd
+import seaborn as sns
+from keras.applications.densenet import DenseNet121, preprocess_input
+from keras.callbacks import ReduceLROnPlateau
+from keras.layers import Dense, GlobalAveragePooling2D
+from keras.metrics import (categorical_accuracy, categorical_crossentropy,
+                           top_k_categorical_accuracy)
+from keras.models import Model, load_model
+from keras.optimizers import Adam
+from keras.callbacks import TensorBoard, ModelCheckpoint
+# from tensorflow.keras.applications.nasnet import preprocess_input
 start = dt.datetime.now()
 
 
@@ -76,18 +79,23 @@ def top_3_accuracy(y_true, y_pred):
     return top_k_categorical_accuracy(y_true, y_pred, k=3)
 
 
-STEPS = 800
+STEPS = 1000
 EPOCHS = 16
 size = 64
 batchsize = 256
 
-model = NASNetMobile(input_shape=(size, size, 1), weights=None, classes=NCATS)
-# model = keras.applications.nasnet.NASNetMobile(input_shape=(size, size, 1), include_top=True, weights=None, input_tensor=None, pooling=None, classes=NCATS)
+base_model = DenseNet121(include_top=False, weights='imagenet',
+                         input_shape=(size, size, 3), classes=NCATS)
 
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dense(1024, activation='relu')(x)
+predictions = Dense(NCATS, activation='softmax')(x)
+model = Model(inputs=base_model.input, outputs=predictions)
 model.load_weights("model_dense121.h5")
+model.compile(optimizer=Adam(lr=1e-4, decay=1e-9), loss='categorical_crossentropy', metrics=[
+              categorical_crossentropy, categorical_accuracy, top_3_accuracy])
 
-model.compile(optimizer=Adam(lr=0.002), loss='categorical_crossentropy',
-              metrics=[categorical_crossentropy, categorical_accuracy, top_3_accuracy])
 print(model.summary())
 
 def draw_cv2(raw_strokes, size=256, lw=6, time_color=True):
@@ -97,6 +105,7 @@ def draw_cv2(raw_strokes, size=256, lw=6, time_color=True):
             color = 255 - min(t, 10) * 13 if time_color else 255
             _ = cv2.line(img, (stroke[0][i], stroke[1][i]),
                          (stroke[0][i + 1], stroke[1][i + 1]), color, lw)
+    img = cv2.cvtColor(img, cv2.COLOR_GRAY2RGB)
     if size != BASE_SIZE:
         return cv2.resize(img, (size, size))
     else:
@@ -148,21 +157,25 @@ fig.savefig('gs.png', dpi=300)
 x, y = next(train_datagen)
 
 # callbacks = [
-# 	ReduceLROnPlateau(monitor='val_top_3_accuracy', factor=0.75, patience=3, min_delta=0.001,
-# 						  mode='max', min_lr=1e-5, verbose=1),
-# 	ModelCheckpoint('model.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=True,
-# 					save_weights_only=True),
+#     ReduceLROnPlateau(monitor='val_top_3_accuracy', factor=0.75, patience=3, min_delta=0.001,
+#                           mode='max', min_lr=1e-5, verbose=1),
+#     ModelCheckpoint('model_dense121.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=True,
+#                     save_weights_only=True),
+#     keras.callbacks.TensorBoard(log_dir='./logs/' + dt.datetime.now().strftime('%d_%H-%M-%S'), histogram_freq=0, 
+#                     write_graph=True, write_images=False, embeddings_freq=0, 
+#                     embeddings_layer_names=None, embeddings_metadata=None)
 # ]
 # hists = []
 # hist = model.fit_generator(
-# 	train_datagen, steps_per_epoch=STEPS, epochs=70, verbose=1,
-# 	validation_data=(x_valid, y_valid),
-# 	callbacks = callbacks
+#     train_datagen, steps_per_epoch=STEPS, epochs=1, verbose=1,
+#     validation_data=(x_valid, y_valid),
+#     callbacks = callbacks
 # )
 # hists.append(hist)
 
 # hist_df = pd.concat([pd.DataFrame(hist.history) for hist in hists], sort=True)
 # hist_df.index = np.arange(1, len(hist_df)+1)
+# # print(hist_df)
 # fig, axs = plt.subplots(nrows=2, sharex=True, figsize=(16, 10))
 # axs[0].plot(hist_df.val_categorical_accuracy, lw=5, label='Validation Accuracy')
 # axs[0].plot(hist_df.categorical_accuracy, lw=5, label='Training Accuracy')
@@ -177,7 +190,7 @@ x, y = next(train_datagen)
 # axs[1].grid()
 # axs[1].legend(loc=0)
 # fig.savefig('hist.png', dpi=300)
-# plt.show();
+# # plt.show()
 
 
 valid_predictions = model.predict(x_valid, batch_size=128, verbose=1)
