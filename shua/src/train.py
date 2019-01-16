@@ -147,6 +147,9 @@ callbacks = [
 						  mode='max', min_lr=1e-5, verbose=1),
 	ModelCheckpoint('model.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=True,
 					save_weights_only=True),
+	keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, 
+					write_graph=True, write_images=False, embeddings_freq=0, 
+					embeddings_layer_names=None, embeddings_metadata=None)
 ]
 hists = []
 hist = model.fit_generator(
@@ -158,7 +161,7 @@ hists.append(hist)
 
 hist_df = pd.concat([pd.DataFrame(hist.history) for hist in hists], sort=True)
 hist_df.index = np.arange(1, len(hist_df)+1)
-print(hist_df)
+# print(hist_df)
 fig, axs = plt.subplots(nrows=2, sharex=True, figsize=(16, 10))
 axs[0].plot(hist_df.val_categorical_accuracy, lw=5, label='Validation Accuracy')
 axs[0].plot(hist_df.categorical_accuracy, lw=5, label='Training Accuracy')
