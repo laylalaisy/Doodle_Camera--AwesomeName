@@ -133,7 +133,7 @@ for i in range(n**2):
 	ax.axis('off')
 plt.tight_layout()
 fig.savefig('gs.png', dpi=300)
-plt.show();
+# plt.show();
 
 x, y = next(train_datagen)
 
@@ -145,7 +145,7 @@ callbacks = [
 ]
 hists = []
 hist = model.fit_generator(
-	train_datagen, steps_per_epoch=STEPS, epochs=70, verbose=1,
+	train_datagen, steps_per_epoch=STEPS, epochs=2, verbose=1,
 	validation_data=(x_valid, y_valid),
 	callbacks = callbacks
 )
