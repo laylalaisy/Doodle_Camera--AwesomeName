@@ -2,7 +2,7 @@ classes= 80
 train  = /home/pjreddie/data/coco/trainvalno5k.txt
 valid  = coco_testdev
 #valid = data/coco_val_5k.list
-names = /Users/xierong/Desktop/Master_2016/googleMLCamp2019/objectDetection/AwesomeName/picTransform/app/darknet/data/coco.names
+names = /root/AwesomeName/picTransform/app/darknet/data/coco.names
 backup = /home/pjreddie/backup/
 eval=coco
 

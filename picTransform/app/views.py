@@ -146,7 +146,11 @@ def joinBox(objectList):
         if subImg is None:
             order+=1
             continue
-        emptyImg[round(y-0.5*height) : round(y+0.5*height), round(x-0.5*width) : round(x+0.5*width)] = subImg
+        yUp = round(y-0.5*height)
+        yBottom = round(y+0.5*height)
+        xLeft = round(x-0.5*width)
+        xRight = round(x+0.5*width)
+        emptyImg[yUp : yBottom, xLeft : xRight] = cv2.resize(subImg, (xRight-xLeft, yBottom-yUp))
         cv2.imwrite(basepath+"/static/images/join.jpg", emptyImg)
         order += 1
 
@@ -179,8 +183,7 @@ def index():
             photo_filename = value['path']
             width = value['width']
             height = value['height']
-            generateDoodle(label, photo_filename, width, height)
-            
+            generateDoodle(label, photo_filename, width, height)   
         joinBox(objectlist)
     
         return render_template('index_ok.html')
