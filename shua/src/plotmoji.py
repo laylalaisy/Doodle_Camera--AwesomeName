@@ -136,7 +136,7 @@ fig, axs = plt.subplots(nrows=n, ncols=n, sharex=True, sharey=True, figsize=(64,
 for i in range(n**2):
 	ax = axs[i // n, i % n]
 	(-x[i]+1)/2
-	ax.imshow((-x[i, :, :, 0] + 1)/2, cmap=plt.get_cmap('Reds'))
+	ax.imshow((-x[i, :, :, 0] + 1)/2, cmap=plt.get_cmap('hot'))
 	ax.axis('off')
 plt.tight_layout()
 fig.savefig('gs.png', dpi=300)
