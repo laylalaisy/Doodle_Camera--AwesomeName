@@ -128,7 +128,7 @@ def df_to_image_array_xd(df, size, lw=6, time_color=True):
     df['drawing'] = df['drawing'].apply(json.loads)
     x = np.zeros((len(df), size, size, 1))
     for i, raw_strokes in enumerate(df.drawing.values):
-        x[i, :, :, 0] = draw_cv2(raw_strokes, size=size, lw=lw, time_color=time_color)
+        x[i, :, :, :] = draw_cv2(raw_strokes, size=size, lw=lw, time_color=time_color)
     x = preprocess_input(x).astype(np.float32)
     return x
 
