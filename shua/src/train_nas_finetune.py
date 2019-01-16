@@ -29,12 +29,12 @@ from tensorflow import keras
 # from keras.applications.densenet import DenseNet169
 # from keras.applications.densenet import DenseNet201
 # from keras.applications.nasnet import NASNetLarge
-# from keras.applications.nasnet import NASNetMobile
+from keras.applications.nasnet import NASNetMobile, preprocess_input
 # from keras.applications.mobilenet_v2 import MobileNetV2
 
 import pandas as pd
 import seaborn as sns
-from keras.applications.densenet import DenseNet121, preprocess_input
+# from keras.applications.densenet import DenseNet121, preprocess_input
 from keras.callbacks import ReduceLROnPlateau
 from keras.layers import Dense, GlobalAveragePooling2D
 from keras.metrics import (categorical_accuracy, categorical_crossentropy,
@@ -98,7 +98,7 @@ EPOCHS = 16
 size = 64
 batchsize = 256
 
-base_model = DenseNet121(include_top=False, weights='imagenet',
+base_model = NASNetMobile(include_top=False, weights='imagenet',
                          input_shape=(size, size, 3), classes=NCATS)
 
 x = base_model.output
@@ -172,7 +172,7 @@ x, y = next(train_datagen)
 callbacks = [
     ReduceLROnPlateau(monitor='val_top_3_accuracy', factor=0.75, patience=3, min_delta=0.001,
                           mode='max', min_lr=1e-5, verbose=1),
-    ModelCheckpoint('model_dense121.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=False,
+    ModelCheckpoint('model_nas.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=False,
                     save_weights_only=True),
     keras.callbacks.TensorBoard(log_dir='./logs/' + dt.datetime.now().strftime('%d_%H-%M-%S'), histogram_freq=0, 
                     write_graph=True, write_images=False, embeddings_freq=0, 

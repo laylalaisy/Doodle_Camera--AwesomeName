@@ -18,12 +18,15 @@ set_session(session)
 
 from tensorflow import keras
 
+import pandas as pd
+import seaborn as sns
+
 # from keras.applications.xception import Xception
 # from keras.applications.vgg16 import VGG16
 # from keras.applications.vgg19 import VGG19
 # from keras.applications.resnet50 import ResNet50
 # from keras.applications.inception_v3 import InceptionV3
-# from keras.applications.inception_resnet_v2 import InceptionResNetV2
+from keras.applications.inception_resnet_v2 import InceptionResNetV2, preprocess_input
 # from keras.applications.mobilenet import MobileNet
 # from keras.applications.densenet import DenseNet121
 # from keras.applications.densenet import DenseNet169
@@ -32,9 +35,7 @@ from tensorflow import keras
 # from keras.applications.nasnet import NASNetMobile
 # from keras.applications.mobilenet_v2 import MobileNetV2
 
-import pandas as pd
-import seaborn as sns
-from keras.applications.densenet import DenseNet121, preprocess_input
+# from keras.applications.densenet import DenseNet121, preprocess_input
 from keras.callbacks import ReduceLROnPlateau
 from keras.layers import Dense, GlobalAveragePooling2D
 from keras.metrics import (categorical_accuracy, categorical_crossentropy,
@@ -98,7 +99,7 @@ EPOCHS = 16
 size = 64
 batchsize = 256
 
-base_model = DenseNet121(include_top=False, weights='imagenet',
+base_model = InceptionResNetV2(include_top=False, weights='imagenet',
                          input_shape=(size, size, 3), classes=NCATS)
 
 x = base_model.output
@@ -106,6 +107,7 @@ x = GlobalAveragePooling2D()(x)
 x = Dense(1024, activation='relu')(x)
 predictions = Dense(NCATS, activation='softmax')(x)
 model = Model(inputs=base_model.input, outputs=predictions)
+model.load_weights("model_inception.h5")
 model.compile(optimizer=Adam(lr=1e-4, decay=1e-9), loss='categorical_crossentropy', metrics=[
               categorical_crossentropy, categorical_accuracy, top_3_accuracy])
 
@@ -169,41 +171,41 @@ fig.savefig('gs.png', dpi=300)
 
 x, y = next(train_datagen)
 
-callbacks = [
-    ReduceLROnPlateau(monitor='val_top_3_accuracy', factor=0.75, patience=3, min_delta=0.001,
-                          mode='max', min_lr=1e-5, verbose=1),
-    ModelCheckpoint('model_dense121.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=False,
-                    save_weights_only=True),
-    keras.callbacks.TensorBoard(log_dir='./logs/' + dt.datetime.now().strftime('%d_%H-%M-%S'), histogram_freq=0, 
-                    write_graph=True, write_images=False, embeddings_freq=0, 
-                    embeddings_layer_names=None, embeddings_metadata=None)
-]
-hists = []
-hist = model.fit_generator(
-    train_datagen, steps_per_epoch=STEPS, epochs=1000, verbose=1,
-    validation_data=(x_valid, y_valid),
-    callbacks = callbacks
-)
-hists.append(hist)
+# callbacks = [
+#     ReduceLROnPlateau(monitor='val_top_3_accuracy', factor=0.75, patience=3, min_delta=0.001,
+#                           mode='max', min_lr=1e-5, verbose=1),
+#     ModelCheckpoint('model_dense121.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=True,
+#                     save_weights_only=True),
+#     keras.callbacks.TensorBoard(log_dir='./logs/' + dt.datetime.now().strftime('%d_%H-%M-%S'), histogram_freq=0, 
+#                     write_graph=True, write_images=False, embeddings_freq=0, 
+#                     embeddings_layer_names=None, embeddings_metadata=None)
+# ]
+# hists = []
+# hist = model.fit_generator(
+#     train_datagen, steps_per_epoch=STEPS, epochs=1, verbose=1,
+#     validation_data=(x_valid, y_valid),
+#     callbacks = callbacks
+# )
+# hists.append(hist)
 
-hist_df = pd.concat([pd.DataFrame(hist.history) for hist in hists], sort=True)
-hist_df.index = np.arange(1, len(hist_df)+1)
-# print(hist_df)
-fig, axs = plt.subplots(nrows=2, sharex=True, figsize=(16, 10))
-axs[0].plot(hist_df.val_categorical_accuracy, lw=5, label='Validation Accuracy')
-axs[0].plot(hist_df.categorical_accuracy, lw=5, label='Training Accuracy')
-axs[0].set_ylabel('Accuracy')
-axs[0].set_xlabel('Epoch')
-axs[0].grid()
-axs[0].legend(loc=0)
-axs[1].plot(hist_df.val_categorical_crossentropy, lw=5, label='Validation MLogLoss')
-axs[1].plot(hist_df.categorical_crossentropy, lw=5, label='Training MLogLoss')
-axs[1].set_ylabel('MLogLoss')
-axs[1].set_xlabel('Epoch')
-axs[1].grid()
-axs[1].legend(loc=0)
-fig.savefig('hist.png', dpi=300)
-# plt.show()
+# hist_df = pd.concat([pd.DataFrame(hist.history) for hist in hists], sort=True)
+# hist_df.index = np.arange(1, len(hist_df)+1)
+# # print(hist_df)
+# fig, axs = plt.subplots(nrows=2, sharex=True, figsize=(16, 10))
+# axs[0].plot(hist_df.val_categorical_accuracy, lw=5, label='Validation Accuracy')
+# axs[0].plot(hist_df.categorical_accuracy, lw=5, label='Training Accuracy')
+# axs[0].set_ylabel('Accuracy')
+# axs[0].set_xlabel('Epoch')
+# axs[0].grid()
+# axs[0].legend(loc=0)
+# axs[1].plot(hist_df.val_categorical_crossentropy, lw=5, label='Validation MLogLoss')
+# axs[1].plot(hist_df.categorical_crossentropy, lw=5, label='Training MLogLoss')
+# axs[1].set_ylabel('MLogLoss')
+# axs[1].set_xlabel('Epoch')
+# axs[1].grid()
+# axs[1].legend(loc=0)
+# fig.savefig('hist.png', dpi=300)
+# # plt.show()
 
 
 valid_predictions = model.predict(x_valid, batch_size=128, verbose=1)

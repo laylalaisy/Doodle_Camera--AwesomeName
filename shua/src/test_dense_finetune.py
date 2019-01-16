@@ -20,6 +20,21 @@ from tensorflow import keras
 
 import pandas as pd
 import seaborn as sns
+
+# from keras.applications.xception import Xception
+# from keras.applications.vgg16 import VGG16
+# from keras.applications.vgg19 import VGG19
+# from keras.applications.resnet50 import ResNet50
+# from keras.applications.inception_v3 import InceptionV3
+# from keras.applications.inception_resnet_v2 import InceptionResNetV2
+# from keras.applications.mobilenet import MobileNet
+# from keras.applications.densenet import DenseNet121
+# from keras.applications.densenet import DenseNet169
+# from keras.applications.densenet import DenseNet201
+# from keras.applications.nasnet import NASNetLarge
+# from keras.applications.nasnet import NASNetMobile
+# from keras.applications.mobilenet_v2 import MobileNetV2
+
 from keras.applications.densenet import DenseNet121, preprocess_input
 from keras.callbacks import ReduceLROnPlateau
 from keras.layers import Dense, GlobalAveragePooling2D

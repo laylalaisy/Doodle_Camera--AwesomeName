@@ -23,7 +23,7 @@ from tensorflow import keras
 # from keras.applications.vgg19 import VGG19
 # from keras.applications.resnet50 import ResNet50
 # from keras.applications.inception_v3 import InceptionV3
-# from keras.applications.inception_resnet_v2 import InceptionResNetV2
+from keras.applications.inception_resnet_v2 import InceptionResNetV2, preprocess_input
 # from keras.applications.mobilenet import MobileNet
 # from keras.applications.densenet import DenseNet121
 # from keras.applications.densenet import DenseNet169
@@ -34,7 +34,7 @@ from tensorflow import keras
 
 import pandas as pd
 import seaborn as sns
-from keras.applications.densenet import DenseNet121, preprocess_input
+# from keras.applications.densenet import InceptionResNetV2, preprocess_input
 from keras.callbacks import ReduceLROnPlateau
 from keras.layers import Dense, GlobalAveragePooling2D
 from keras.metrics import (categorical_accuracy, categorical_crossentropy,
@@ -98,7 +98,7 @@ EPOCHS = 16
 size = 64
 batchsize = 256
 
-base_model = DenseNet121(include_top=False, weights='imagenet',
+base_model = InceptionResNetV2(include_top=False, weights='imagenet',
                          input_shape=(size, size, 3), classes=NCATS)
 
 x = base_model.output
@@ -172,7 +172,7 @@ x, y = next(train_datagen)
 callbacks = [
     ReduceLROnPlateau(monitor='val_top_3_accuracy', factor=0.75, patience=3, min_delta=0.001,
                           mode='max', min_lr=1e-5, verbose=1),
-    ModelCheckpoint('model_dense121.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=False,
+    ModelCheckpoint('model_inception.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=False,
                     save_weights_only=True),
     keras.callbacks.TensorBoard(log_dir='./logs/' + dt.datetime.now().strftime('%d_%H-%M-%S'), histogram_freq=0, 
                     write_graph=True, write_images=False, embeddings_freq=0, 
