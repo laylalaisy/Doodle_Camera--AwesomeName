@@ -24,8 +24,8 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.applications import MobileNet, NASNetMobile
-# from tensorflow.keras.applications.mobilenet import preprocess_input
-from tensorflow.keras.applications.nasnet import preprocess_input
+from tensorflow.keras.applications.mobilenet import preprocess_input
+# from tensorflow.keras.applications.nasnet import preprocess_input
 start = dt.datetime.now()
 
 
@@ -81,8 +81,8 @@ EPOCHS = 16
 size = 64
 batchsize = 680
 
-model = keras.applications.nasnet.NASNetMobile(input_shape=(size, size, 1), include_top=True, weights=None, input_tensor=None, pooling=None, classes=NCATS)
-# model = MobileNet(input_shape=(size, size, 1), alpha=1., weights=None, classes=NCATS)
+# model = keras.applications.nasnet.NASNetMobile(input_shape=(size, size, 1), include_top=True, weights=None, input_tensor=None, pooling=None, classes=NCATS)
+model = MobileNet(input_shape=(size, size, 1), alpha=1., weights=None, classes=NCATS)
 model.compile(optimizer=Adam(lr=0.002), loss='categorical_crossentropy',
 			  metrics=[categorical_crossentropy, categorical_accuracy, top_3_accuracy])
 print(model.summary())
