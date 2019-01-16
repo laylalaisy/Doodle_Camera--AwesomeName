@@ -97,6 +97,7 @@ def draw_cv2(raw_strokes, size=256, lw=6, time_color=True):
 			color = 255 - min(t, 10) * 13 if time_color else 255
 			_ = cv2.line(img, (stroke[0][i], stroke[1][i]),
 						 (stroke[0][i + 1], stroke[1][i + 1]), color, lw)
+	img = cv2.flip(img, 0)
 	if size != BASE_SIZE:
 		return cv2.resize(img, (size, size))
 	else:
@@ -204,7 +205,7 @@ top3cats.shape
 
 test['word'] = top3cats['a'] + ' ' + top3cats['b'] + ' ' + top3cats['c']
 submission = test[['key_id', 'word']]
-submission.to_csv('gs_mn_submission_{}.csv'.format(int(map3 * 10**4)), index=False)
+submission.to_csv('flip_gs_mn_submission_{}.csv'.format(int(map3 * 10**4)), index=False)
 submission.head()
 submission.shape
 
