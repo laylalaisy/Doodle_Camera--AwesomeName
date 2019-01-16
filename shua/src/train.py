@@ -81,7 +81,7 @@ EPOCHS = 16
 size = 64
 batchsize = 680
 
-model = keras.applications.nasnet.NASNetLarge(input_shape=(size, size, 1), include_top=True, weights='imagenet', input_tensor=None, pooling=None, classes=NCATS)
+model = keras.applications.nasnet.NASNetLarge(input_shape=(size, size, 1), include_top=True, weights=None, input_tensor=None, pooling=None, classes=NCATS)
 # model = MobileNet(input_shape=(size, size, 1), alpha=1., weights=None, classes=NCATS)
 model.compile(optimizer=Adam(lr=0.002), loss='categorical_crossentropy',
 			  metrics=[categorical_crossentropy, categorical_accuracy, top_3_accuracy])
