@@ -166,7 +166,7 @@ callbacks = [
 						  mode='max', min_lr=1e-5, verbose=1),
 	ModelCheckpoint('model.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=True,
 					save_weights_only=True),
-	keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, 
+	keras.callbacks.TensorBoard(log_dir='./logs/' + dt.datetime.now().strftime('%d_%H-%M-%S'), histogram_freq=0, 
 					write_graph=True, write_images=False, embeddings_freq=0, 
 					embeddings_layer_names=None, embeddings_metadata=None)
 ]
