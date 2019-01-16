@@ -23,8 +23,9 @@ from tensorflow.keras.metrics import categorical_accuracy, top_k_categorical_acc
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.applications import MobileNet
-from tensorflow.keras.applications.mobilenet import preprocess_input
+from tensorflow.keras.applications import MobileNet, NASNetMobile
+from tensorflow.keras.applications.nasnet import preprocess_input
+# from tensorflow.keras.applications.mobilenet import preprocess_input
 start = dt.datetime.now()
 
 
