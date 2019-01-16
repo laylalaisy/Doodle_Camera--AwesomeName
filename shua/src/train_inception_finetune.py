@@ -95,7 +95,7 @@ def top_3_accuracy(y_true, y_pred):
 
 STEPS = 1000
 EPOCHS = 16
-size = 64
+size = 75
 batchsize = 256
 
 base_model = InceptionResNetV2(include_top=False, weights='imagenet',
