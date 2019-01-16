@@ -158,7 +158,7 @@ x, y = next(train_datagen)
 callbacks = [
     ReduceLROnPlateau(monitor='val_top_3_accuracy', factor=0.75, patience=3, min_delta=0.001,
                           mode='max', min_lr=1e-5, verbose=1),
-    ModelCheckpoint('model_dense121.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=True,
+    ModelCheckpoint('model_dense121.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=False,
                     save_weights_only=True),
     keras.callbacks.TensorBoard(log_dir='./logs/' + dt.datetime.now().strftime('%d_%H-%M-%S'), histogram_freq=0, 
                     write_graph=True, write_images=False, embeddings_freq=0, 
