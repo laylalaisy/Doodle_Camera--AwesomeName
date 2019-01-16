@@ -24,11 +24,11 @@ function parseSimplifiedDrawings(fileName, callback) {
 
 parseSimplifiedDrawings(ndjson_file_name, function(err, drawings) {
   if(err) return console.error(err);
-  drawings.forEach(function(d) {
-    // Do something with the drawing
-    console.log(d.key_id, d.countrycode);
-  })
-  console.log("# of drawings:", drawings);
+  // drawings.forEach(function(d) {
+    // // Do something with the drawing
+    // console.log(d.key_id, d.countrycode);
+  // })
+  // console.log("# of drawings:", drawings);
   var filename = json_file_name;
   fs.writeFileSync(filename, JSON.stringify(drawings));
 })
