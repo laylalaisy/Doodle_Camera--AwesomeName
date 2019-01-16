@@ -159,6 +159,7 @@ hists.append(hist)
 
 hist_df = pd.concat([pd.DataFrame(hist.history) for hist in hists], sort=True)
 hist_df.index = np.arange(1, len(hist_df)+1)
+print(hist_df)
 fig, axs = plt.subplots(nrows=2, sharex=True, figsize=(16, 10))
 axs[0].plot(hist_df.val_categorical_accuracy, lw=5, label='Validation Accuracy')
 axs[0].plot(hist_df.categorical_accuracy, lw=5, label='Training Accuracy')
