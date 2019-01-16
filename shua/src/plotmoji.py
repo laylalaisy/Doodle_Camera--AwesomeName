@@ -131,8 +131,8 @@ print('Validation array memory {:.2f} GB'.format(x_valid.nbytes / 1024.**3 ))
 train_datagen = image_generator_xd(size=size, batchsize=batchsize, ks=range(NCSVS - 1))
 
 x, y = next(train_datagen)
-n = 2
-fig, axs = plt.subplots(nrows=n, ncols=n, sharex=True, sharey=True, figsize=(64, 64))
+n = 4
+fig, axs = plt.subplots(nrows=n, ncols=n, sharex=True, sharey=True, figsize=(32, 32))
 for i in range(n**2):
 	ax = axs[i // n, i % n]
 	(-x[i]+1)/2
