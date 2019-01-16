@@ -1,4 +1,6 @@
 shua/data/*
+shua/input/*
+*.h5
 *.swp
 *.pyc
 
