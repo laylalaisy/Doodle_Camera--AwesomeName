@@ -9,6 +9,13 @@ import cv2
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+
+config = tf.ConfigProto()
+config.gpu_options.allow_growth = True
+session = tf.Session(config=config)
+from tensorflow.keras.backend.tensorflow_backend import set_session
+set_session(session)
+
 from tensorflow import keras
 from tensorflow.keras.layers import Conv2D, MaxPooling2D
 from tensorflow.keras.layers import Dense, Dropout, Flatten, Activation
@@ -138,12 +145,12 @@ fig.savefig('gs.png', dpi=300)
 
 x, y = next(train_datagen)
 
-callbacks = [
-	ReduceLROnPlateau(monitor='val_top_3_accuracy', factor=0.75, patience=3, min_delta=0.001,
-						  mode='max', min_lr=1e-5, verbose=1),
-	ModelCheckpoint('model.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=True,
-					save_weights_only=True),
-]
+# callbacks = [
+# 	ReduceLROnPlateau(monitor='val_top_3_accuracy', factor=0.75, patience=3, min_delta=0.001,
+# 						  mode='max', min_lr=1e-5, verbose=1),
+# 	ModelCheckpoint('model.h5', monitor='val_top_3_accuracy', mode='max', save_best_only=True,
+# 					save_weights_only=True),
+# ]
 # hists = []
 # hist = model.fit_generator(
 # 	train_datagen, steps_per_epoch=STEPS, epochs=70, verbose=1,
