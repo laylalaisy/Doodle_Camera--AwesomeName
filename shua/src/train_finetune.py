@@ -79,7 +79,7 @@ def top_3_accuracy(y_true, y_pred):
 STEPS = 800
 EPOCHS = 16
 size = 64
-batchsize = 10
+batchsize = 680
 
 
 model = keras.applications.nasnet.NASNetMobile(input_shape=(size, size, 1), include_top=True, weights=None, input_tensor=None, pooling=None, classes=NCATS)
