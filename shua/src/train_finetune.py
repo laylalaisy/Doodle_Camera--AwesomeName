@@ -96,8 +96,12 @@ x = Dropout(0.5)(x)
 x = Dense(1024, activation="relu")(x)
 predictions = Dense(NCATS, activation="softmax")(x)
 
-model.compile(optimizer=Adam(lr=0.002), loss='categorical_crossentropy',
+model_final = Model(input = model.input, output = predictions)
+
+model_final.compile(optimizer=Adam(lr=0.002), loss='categorical_crossentropy',
 			  metrics=[categorical_crossentropy, categorical_accuracy, top_3_accuracy])
+
+model = model_final
 print(model.summary())
 
 def draw_cv2(raw_strokes, size=256, lw=6, time_color=True):
