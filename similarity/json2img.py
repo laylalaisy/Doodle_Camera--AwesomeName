@@ -5,7 +5,7 @@ import pylab as pl
 if __name__ == "__main__":
     f = open("./dataset/doodles/json/dog/full_simplified_dog.json")
     setting = json.load(f)
-    for j in range(0,10):
+    for j in range(0,1000):
         for i in range(0,len(setting[j]['drawing'])):
             x = setting[j]['drawing'][i][0]
             y = setting[j]['drawing'][i][1]
