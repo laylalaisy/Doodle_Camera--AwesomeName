@@ -81,11 +81,11 @@ EPOCHS = 16
 size = 64
 batchsize = 680
 
-# model = keras.applications.nasnet.NASNetMobile(input_shape=(size, size, 1), include_top=True, weights=None, input_tensor=None, pooling=None, classes=NCATS)
-model = MobileNet(input_shape=(size, size, 1), alpha=1., weights=None, classes=NCATS)
-model.compile(optimizer=Adam(lr=0.002), loss='categorical_crossentropy',
-			  metrics=[categorical_crossentropy, categorical_accuracy, top_3_accuracy])
-print(model.summary())
+# # model = keras.applications.nasnet.NASNetMobile(input_shape=(size, size, 1), include_top=True, weights=None, input_tensor=None, pooling=None, classes=NCATS)
+# model = MobileNet(input_shape=(size, size, 1), alpha=1., weights=None, classes=NCATS)
+# model.compile(optimizer=Adam(lr=0.002), loss='categorical_crossentropy',
+# 			  metrics=[categorical_crossentropy, categorical_accuracy, top_3_accuracy])
+# print(model.summary())
 
 def draw_cv2(raw_strokes, size=256, lw=6, time_color=True):
 	img = np.zeros((BASE_SIZE, BASE_SIZE), np.uint8)
