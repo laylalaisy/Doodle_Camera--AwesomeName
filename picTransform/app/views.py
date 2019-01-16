@@ -5,6 +5,9 @@ import os
 import cv2
 from datetime import timedelta
 import numpy
+import sys
+from PIL import Image
+import imagehash
 
 # import sys
 # sys.path.append('/home/rongxie_sx/AwesomeName/picTransform/app/darknet/python/')
@@ -21,6 +24,8 @@ def detection(image):
     net = dn.load_net(str.encode(final_path+"/cfg/yolov3.cfg"),
                   str.encode(final_path+"/yolov3.weights"), 0)
     meta = dn.load_meta(str.encode(final_path+"/cfg/coco.data"))
+    # meta = dn.load_meta(str.encode(final_path+"/cfg/combine9k.data"))
+
     res = dn.detect(net, meta, str.encode(basepath+"/static/images/"+image))
     return res
 
@@ -48,6 +53,7 @@ def splitBox(objectList):
         y = obj[2][1]
         width = obj[2][2]
         height = obj[2][3]
+        print(category)
         if category == 'person':
             objectList.remove(obj)
             y1 = y - 7 / 16 * height
@@ -72,6 +78,7 @@ def splitBox(objectList):
         else:
             splitOneBox(image, x, y, width, height, order)
             box[order] = {}
+            box[order]['label'] = category
             box[order]['path'] = basepath+'/static/images/'+str(order)+'.jpg'
             box[order]['x'] = x
             box[order]['y'] = y
@@ -80,6 +87,47 @@ def splitBox(objectList):
             order += 1
     return (box, objectList)
 
+DOODLENUM = 3
+
+def generateDoodle(label, photo_filename, width, height):
+    basepath = os.path.dirname(__file__)
+    doodle_foldername = basepath + "/ndjson/image_orig/"+label+"/"
+    firstimg = doodle_foldername + "0.png"
+    try:
+        with open(firstimg, "r") as f:
+            # resize photo
+            photo = cv2.imread(photo_filename,0)
+            photo_resize = cv2.resize(photo, (256, 256), interpolation=cv2.INTER_CUBIC)
+            cv2.imwrite(photo_filename, photo_resize)
+
+            # find similar doodle
+            photo_hash = imagehash.average_hash(Image.open(photo_filename))
+            min_dist = float('inf')
+            for i in range(DOODLENUM):
+                doodle_hash = imagehash.average_hash(Image.open(doodle_foldername+str(i)+'.png'))
+                dist = photo_hash - doodle_hash
+                if min_dist > dist:
+                    min_dist = dist
+                    min_idx = i
+            print(min_dist)
+            print(doodle_foldername+str(min_idx)+'.png')
+
+            # input original image
+            img_orig = cv2.imread(doodle_foldername+str(min_idx)+'.png',0)
+
+            # resize image: 256*256
+            img_resize = cv2.resize(img_orig, (round(width),round(height)), interpolation=cv2.INTER_CUBIC)
+
+            # save resize image
+            cv2.imwrite(photo_filename, img_resize)
+
+            # plt.imshow(img_resize,cmap = 'gray')
+            # plt.show()
+    except Exception as e:
+        os.remove(photo_filename)
+        return
+
+    
 def joinBox(objectList):
     basepath = os.path.dirname(__file__)
     image = basepath + "/static/images/current.jpg"
@@ -91,7 +139,13 @@ def joinBox(objectList):
         y = obj[2][1]
         width = obj[2][2]
         height = obj[2][3]
+        # if not os.path.exist(basepath + "/static/images/" + str(order) + ".jpg"):
+        #     order+=1
+        #     continue
         subImg = cv2.imread(basepath + "/static/images/" + str(order) + ".jpg")
+        if subImg is None:
+            order+=1
+            continue
         emptyImg[round(y-0.5*height) : round(y+0.5*height), round(x-0.5*width) : round(x+0.5*width)] = subImg
         cv2.imwrite(basepath+"/static/images/join.jpg", emptyImg)
         order += 1
@@ -120,6 +174,13 @@ def index():
         image = 'current.jpg'
         res = detection(image)
         (boxes, objectlist) = splitBox(res)
+        for key, value in boxes.items():
+            label = value['label']
+            photo_filename = value['path']
+            width = value['width']
+            height = value['height']
+            generateDoodle(label, photo_filename, width, height)
+            
         joinBox(objectlist)
     
         return render_template('index_ok.html')

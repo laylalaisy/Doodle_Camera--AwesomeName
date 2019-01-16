@@ -1,16 +1,20 @@
 {% extends "base.html" %}
 {% block content %}
 <body>
-    <h3>Please upload your picture :)</h3>
-    <form action="" enctype='multipart/form-data' method='POST'>
+    <h3 align="center">Please upload your picture :)</h3>
+    <form align="center" action="" enctype='multipart/form-data' method='POST'>
         <input type="file" name="file" style="margin-top:20px;"/>
-        <br>
         <input type="submit" value="Upload" class="button-new" style="margin-top:15px;"/>
     </form>
-    <h3>Your original picture is: </h3>
-    <img src="{{ url_for('static', filename= './images/current.jpg') }}" width="200" alt="Your picture is missing..."/>
-    <br>
-    <h3>Your transformed picture is: </h3>
-    <img src="{{ url_for('static', filename= './images/join.jpg') }}" width="200" alt="Your picture is missing..."/>
+    <div align="center">
+        <a style="left:10px;">
+            <h3 align="center">Your original picture is: </h3>
+            <img src="{{ url_for('static', filename= './images/current.jpg') }}" width="200" alt="Your picture is missing..."/>
+        </a>
+        <a style="right:10px;">
+            <h3 align="center">Your transformed picture is: </h3>
+            <img src="{{ url_for('static', filename= './images/join.jpg') }}" width="200" alt="Your picture is missing..."/>
+        </a>
+    </div>
 </body>
 {% endblock %}
