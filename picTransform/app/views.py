@@ -93,9 +93,11 @@ def generateDoodle(label, photo_filename, width, height):
     basepath = os.path.dirname(__file__)
     doodle_foldername = basepath + "/ndjson/image_orig/"+label+"/"
     firstimg = doodle_foldername + "0.png"
+    print("firstimg:" + firstimg)
     try:
         with open(firstimg, "r") as f:
             # resize photo
+            print("##exist##")
             photo = cv2.imread(photo_filename,0)
             photo_resize = cv2.resize(photo, (256, 256), interpolation=cv2.INTER_CUBIC)
             cv2.imwrite(photo_filename, photo_resize)
@@ -109,8 +111,7 @@ def generateDoodle(label, photo_filename, width, height):
                 if min_dist > dist:
                     min_dist = dist
                     min_idx = i
-            print(min_dist)
-            print(doodle_foldername+str(min_idx)+'.png')
+            print('output_doodle:' + doodle_foldername+str(min_idx)+'.png')
 
             # input original image
             img_orig = cv2.imread(doodle_foldername+str(min_idx)+'.png',0)
@@ -124,6 +125,7 @@ def generateDoodle(label, photo_filename, width, height):
             # plt.imshow(img_resize,cmap = 'gray')
             # plt.show()
     except Exception as e:
+        print("##Not Exist##")
         os.remove(photo_filename)
         return
 
