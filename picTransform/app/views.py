@@ -156,6 +156,7 @@ def joinBox(objectList):
         try:
             emptyImg[yUp : yBottom, xLeft : xRight] = cv2.resize(subImg, (xRight-xLeft, yBottom-yUp))
         except Exception as e:
+            print(str(obj[0]))
             order += 1
             continue
         cv2.imwrite(basepath+"/static/images/join.jpg", emptyImg)
