@@ -8,3 +8,4 @@ Github:  https://github.com/laylalaisy/Doodle_Camera--AwesomeName
 PPT: https://docs.google.com/presentation/d/1j50bNXnlmWNMyljWRQDWrnEB-gHcQ4TBbbPqAnHsDx8/edit#slide=id.p1  
 Poster: https://docs.google.com/presentation/d/1Cey5EeBEdEqRYktxKW8tOywhIxM0poXg36-HQU4ueUc/edit?usp=sharing  
 
+All models for QuickDRAW Dataset Classification Task are under branch cky.
