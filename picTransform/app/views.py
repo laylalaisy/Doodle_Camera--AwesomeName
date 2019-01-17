@@ -154,7 +154,12 @@ def joinBox(objectList):
         xLeft = round(x-0.5*width)
         xRight = round(x+0.5*width)
         try:
-            emptyImg[yUp : yBottom, xLeft : xRight] = cv2.resize(subImg, (xRight-xLeft, yBottom-yUp))
+            todoimg = cv2.resize(subImg, (xRight-xLeft, yBottom-yUp))
+            for i in range(yUp, yBottom):
+                for j in range(xLeft, xRight):
+                    print(todoimg[i - yUp][j - xLeft])
+                    if min(todoimg[i - yUp][j - xLeft]) != 255: 
+                        emptyImg[i, j] = todoimg[i - yUp][j - xLeft]
         except Exception as e:
             print(str(obj[0]))
             order += 1
