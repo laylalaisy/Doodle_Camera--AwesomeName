@@ -104,7 +104,7 @@ def generateDoodle(label, photo_filename, width, height):
             # find similar doodle
             photo_hash = imagehash.average_hash(Image.open(photo_filename))
             min_dist = float('inf')
-            if(label == "face" or label == "pants" or label == "t-shirt" or label == "bench" or label == "bicycle" or label == "cup" or label == "fork" or label == "toilet" or label == "cat" or label == "dot" or label == "cake" or label == "horse"):
+            if(label == "face" or label == "pants" or label == "t-shirt" or label == "bench" or label == "bicycle" or label == "cup" or label == "fork" or label == "toilet" or label == "cat" or label == "dog" or label == "cake" or label == "horse"):
                 DOODLENUM = 10
             else:
                 DOODLENUM = 1000
