@@ -87,7 +87,7 @@ def splitBox(objectList):
             order += 1
     return (box, objectList)
 
-DOODLENUM = 3
+DOODLENUM = 1000
 
 def generateDoodle(label, photo_filename, width, height):
     basepath = os.path.dirname(__file__)
