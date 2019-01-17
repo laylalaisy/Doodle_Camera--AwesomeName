@@ -26,7 +26,7 @@ net = dn.load_net(str.encode(final_path+"/cfg/yolov3.cfg"),
 meta = dn.load_meta(str.encode(final_path+"/cfg/coco.data"))
 # meta = dn.load_meta(str.encode(final_path+"/cfg/combine9k.data"))
 
-def detection(image, net, meta, basepath)
+def detection(image)
     res = dn.detect(net, meta, str.encode(basepath+"/static/images/"+image))
     return res
 
