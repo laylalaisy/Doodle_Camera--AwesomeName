@@ -18,15 +18,15 @@ from .darknet.python import darknet as dn
 #import darknet.python.darknet as dn
 
 
-def detection(image):
-    basepath = os.path.dirname(__file__)
-    final_path = os.path.join(basepath, 'darknet')
-    dn.set_gpu(0)
-    net = dn.load_net(str.encode(final_path+"/cfg/yolov3.cfg"),
-                  str.encode(final_path+"/yolov3.weights"), 0)
-    meta = dn.load_meta(str.encode(final_path+"/cfg/coco.data"))
-    # meta = dn.load_meta(str.encode(final_path+"/cfg/combine9k.data"))
+basepath = os.path.dirname(__file__)
+final_path = os.path.join(basepath, 'darknet')
+dn.set_gpu(0)
+net = dn.load_net(str.encode(final_path+"/cfg/yolov3.cfg"),
+                str.encode(final_path+"/yolov3.weights"), 0)
+meta = dn.load_meta(str.encode(final_path+"/cfg/coco.data"))
+# meta = dn.load_meta(str.encode(final_path+"/cfg/combine9k.data"))
 
+def detection(image, net, meta, basepath)
     res = dn.detect(net, meta, str.encode(basepath+"/static/images/"+image))
     return res
 
@@ -157,13 +157,14 @@ def joinBox(objectList):
             todoimg = cv2.resize(subImg, (xRight-xLeft, yBottom-yUp))
             for i in range(yUp, yBottom):
                 for j in range(xLeft, xRight):
-                    print(todoimg[i - yUp][j - xLeft])
                     if min(todoimg[i - yUp][j - xLeft]) != 255: 
                         emptyImg[i, j] = todoimg[i - yUp][j - xLeft]
         except Exception as e:
             print(str(obj[0]))
             order += 1
             continue
+        kernel = np.ones((5,5), np.uint8)
+        emptyImg = cv2.dilate(emptyImg, kernel, iterations=2)
         cv2.imwrite(basepath+"/static/images/join.jpg", emptyImg)
         order += 1
 
@@ -174,6 +175,7 @@ app.send_file_max_age_default = timedelta(seconds=1)
 
 @app.route('/')
 @app.route('/index', methods = ['GET', 'POST'])
+
 
 def index():
     if request.method == 'POST':
