@@ -46,6 +46,8 @@ from keras.callbacks import TensorBoard, ModelCheckpoint
 # from tensorflow.keras.applications.nasnet import preprocess_input
 start = dt.datetime.now()
 
+INPUT_DIR = '../input/quickdraw-doodle-recognition/'
+
 BASE_SIZE = 256
 NCSVS = 100
 NCATS = 340
@@ -61,51 +63,51 @@ def list_all_categories():
 
 print(list_all_categories())
 
-STEPS = 1000
-EPOCHS = 16
-size = 64
-batchsize = 256
+# STEPS = 1000
+# EPOCHS = 16
+# size = 64
+# batchsize = 256
 
-base_model = DenseNet121(include_top=False, weights=None,
-                         input_shape=(size, size, 3), classes=NCATS)
+# base_model = DenseNet121(include_top=False, weights=None,
+#                          input_shape=(size, size, 3), classes=NCATS)
 
-x = base_model.output
-x = GlobalAveragePooling2D()(x)
-x = Dense(1024, activation='relu')(x)
-predictions = Dense(NCATS, activation='softmax')(x)
-model = Model(inputs=base_model.input, outputs=[x, predictions])
-model.load_weights("/Users/justryit/Desktop/dense121_back.h5")
+# x = base_model.output
+# x = GlobalAveragePooling2D()(x)
+# x = Dense(1024, activation='relu')(x)
+# predictions = Dense(NCATS, activation='softmax')(x)
+# model = Model(inputs=base_model.input, outputs=[x, predictions])
+# model.load_weights("/Users/justryit/Desktop/dense121_back.h5")
 
-# model.compile(optimizer=Adam(lr=1e-4, decay=1e-9), loss='categorical_crossentropy', metrics=[
-#               categorical_crossentropy, categorical_accuracy, top_3_accuracy])
+# # model.compile(optimizer=Adam(lr=1e-4, decay=1e-9), loss='categorical_crossentropy', metrics=[
+# #               categorical_crossentropy, categorical_accuracy, top_3_accuracy])
 
-print(model.summary())
+# print(model.summary())
 
-def readimage(img_path, size=64):
-    img = cv2.imread(img_path)
-    x = np.zeros((1, size, size, 3))
-    x[0, :, :, :] = cv2.resize(img, (size, size))
-    x = preprocess_input(x).astype(np.float32)
-    return x
+# def readimage(img_path, size=64):
+#     img = cv2.imread(img_path)
+#     x = np.zeros((1, size, size, 3))
+#     x[0, :, :, :] = cv2.resize(img, (size, size))
+#     x = preprocess_input(x).astype(np.float32)
+#     return x
 
-IMAGE_FILE = '3.png'
+# IMAGE_FILE = '3.png'
 
-# test = pd.read_csv(os.path.join(INPUT_DIR, 'test_simplified.csv'))
-# test.head()
-# x_test = df_to_image_array_xd(test, size)
-# print(test.shape, x_test.shape)
-# print('Test array memory {:.2f} GB'.format(x_test.nbytes / 1024.**3 ))
+# # test = pd.read_csv(os.path.join(INPUT_DIR, 'test_simplified.csv'))
+# # test.head()
+# # x_test = df_to_image_array_xd(test, size)
+# # print(test.shape, x_test.shape)
+# # print('Test array memory {:.2f} GB'.format(x_test.nbytes / 1024.**3 ))
 
-x_test = readimage(IMAGE_FILE)
-hidden, test_predictions = model.predict(x_test, batch_size=1, verbose=1)
+# x_test = readimage(IMAGE_FILE)
+# hidden, test_predictions = model.predict(x_test, batch_size=1, verbose=1)
 
 
-incat = 'book'
+# incat = 'book'
 
-cats = list_all_categories()
-id2cat = {k: cat.replace(' ', '_') for k, cat in enumerate(cats)}
-cat2id = {cat: k for k, cat in enumerate(cats)}
-print(cat2id[incat])
+# cats = list_all_categories()
+# id2cat = {k: cat.replace(' ', '_') for k, cat in enumerate(cats)}
+# cat2id = {cat: k for k, cat in enumerate(cats)}
+# print(cat2id[incat])
 
-print(test_predictions[0])
-print(hidden[0])
+# print(test_predictions[0])
+# print(hidden[0])
