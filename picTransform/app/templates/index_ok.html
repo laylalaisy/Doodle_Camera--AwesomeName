@@ -3,7 +3,7 @@
 <body>
     <div style="position:absolute; top:10vh; text-align:center; left:0px; right:0px">
         <img
-            style="width:90%; position:absolute; left:0; right:0; margin-left:auto; margin-right:auto; top:50%; margin-top:-50px"
+            style="width:90%; position:absolute; max-width: 600px; left:0; right:0; margin-left:auto; margin-right:auto; top:50%; margin-top:-50px"
             src="{{ url_for('static', filename= './icons/DoodleCamera.png') }}"
         ></img>
     </div>
@@ -16,6 +16,11 @@
             <h3 align="center">Your transformed picture is: </h3>
             <img src="{{ url_for('static', filename= './images/join.jpg') }}" width="200" alt="Your picture is missing..."/>
         </a>
+    </div>
+    <div style="position:absolute; bottom:0; text-align:center; left:0px; right:0px">
+        <img style="width:100%; margin:0; max-width: 600px"
+        src="{{ url_for('static', filename= './icons/doodlebottom.png') }}">
+        </img>
     </div>
 </body>
 {% endblock %}

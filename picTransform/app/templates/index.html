@@ -1,12 +1,90 @@
 {% extends "base.html" %}
 {% block content %}
+<style>
+
+        html, body {
+          height: 100%;
+          width: 100%;
+          overflow-x: hidden;
+          margin:0;
+        }
+        .bg p {
+          margin-top:20px;
+          color:rgb(30,30,40);
+          font-size: 1rem;
+        }
+        .bg{
+          height: 100vh;
+          width: 100%;
+          background-color: rgb(248,248,248);
+        }
+        .icon {
+           width: 25px;
+           height: 25px;
+           vertical-align: -4px;
+           fill: currentColor;
+           overflow: hidden;
+        }
+        .bg .box {
+          position: absolute;
+          width: 100%;
+          top:45%;
+          text-align: center;
+          border: none;
+          border-radius: 3px;
+          font-size: 30px;
+          position: relative;
+          margin-bottom: .25em;
+          vertical-align: top;
+          transition: .3s color, .3s border, .3s transform, .3s opacity;
+        }
+        .loader-05 {
+          border: .2em solid rgb(30,30,40);
+          border-top-color: rgb(248,248,248);
+          border-radius: 50%;
+          animation: 1s loader-05 linear infinite;
+          position: relative;
+          &:before {
+            content: '';
+            display: block;
+            width: inherit;
+            height: inherit;
+            position: absolute;
+            top: -.2em;
+            ;
+            left: -.2em;
+            ;
+            border: .2em solid currentColor;
+            border-radius: 50%;
+            opacity: .5;
+          }
+        }
+        [class*="loader-"] {
+          display: inline-block;
+          width: 1em;
+          height: 1em;
+          color: inherit;
+          vertical-align: middle;
+          pointer-events: none;
+        }
+      
+        @keyframes loader-05 {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+      
+    </style>
     <body style="background-color: #ffffff">
         <form id="form" align="center" action="" enctype='multipart/form-data' method='POST'>
-        <div>
+        <div id = "content">
             <div>
             <div style="position:absolute; top:20vh; text-align:center; left:0px; right:0px">
                 <img
-                    style="width:90%; position:absolute; left:0; right:0; margin-left:auto; margin-right:auto; top:50%; margin-top:-50px"
+                    style="width:90%; position:absolute; max-width: 600px; left:0; right:0; margin-left:auto; margin-right:auto; top:50%; margin-top:-50px"
                     src="{{ url_for('static', filename= './icons/DoodleCamera.png') }}"
                 ></img>
             </div>
@@ -25,7 +103,7 @@
             </div>
         
             <div style="position:absolute; bottom:0; text-align:center; left:0px; right:0px">
-                <img style="width:100%; margin:0"
+                <img style="width:100%; margin:0; max-width: 600px"
                 src="{{ url_for('static', filename= './icons/doodlebottom.png') }}">
                 </img>
             </div>
@@ -36,10 +114,23 @@
             <!-- <input type="file" name="file" style="margin-top:20px;"/> -->
             <!-- <input type="submit" value="Upload" class="button-new" style="margin-top:15px;"/> -->
         </form>
+        <div style="z-index: 1000; height: 100vh; width: 100%">
+            <div id="loading" class="bg" style="opacity:0; background-color: #999999; z-index: 1000; height: 100vh; width: 100%">
+            <div class="box">
+                <div class="loader-05">
+                </div>
+                <p>
+                Loading...
+                </p>
+            </div>
+            </div>
+        </div>
     <script>
         document.getElementById("file").onchange = function() {
             console.log('F')
             document.getElementById("form").submit();
+            document.getElementById("loading").style.opacity = 1;
+            document.getElementById("content").style.opacity = 0;
         };
     </script>
     </body>
