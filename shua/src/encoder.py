@@ -9,6 +9,7 @@ import cv2
 import pandas as pd
 import numpy as np
 import tensorflow as tf
+from shutil import copyfile
 
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
@@ -46,7 +47,40 @@ from keras.callbacks import TensorBoard, ModelCheckpoint
 # from tensorflow.keras.applications.nasnet import preprocess_input
 start = dt.datetime.now()
 
-INPUT_DIR = '../input/quickdraw-doodle-recognition/'
+
+cats = ['airplane', 'alarm clock', 'ambulance', 'angel', 'animal migration', 'ant', 'anvil', 'apple', 'arm', 
+'asparagus', 'axe', 'backpack', 'banana', 'bandage', 'barn', 'baseball', 'baseball bat', 'basket', 'basketball', 
+'bat', 'bathtub', 'beach', 'bear', 'beard', 'bed', 'bee', 'belt', 'bench', 'bicycle', 'binoculars', 'bird', 'birthday cake', 
+'blackberry', 'blueberry', 'book', 'boomerang', 'bottlecap', 'bowtie', 'bracelet', 'brain', 'bread', 'bridge', 'broccoli', 
+'broom', 'bucket', 'bulldozer', 'bus', 'bush', 'butterfly', 'cactus', 'cake', 'calculator', 'calendar', 'camel',
+ 'camera', 'camouflage', 'campfire', 'candle', 'cannon', 'canoe', 'car', 'carrot', 'castle', 'cat', 'ceiling fan', 
+'cell phone', 'cello', 'chair', 'chandelier', 'church', 'circle', 'clarinet', 'clock', 'cloud', 'coffee cup', 'compass', 
+'computer', 'cookie', 'cooler', 'couch', 'cow', 'crab', 'crayon', 'crocodile', 'crown', 'cruise ship', 'cup',
+ 'diamond', 'dishwasher', 'diving board', 'dog', 'dolphin', 'donut', 'door', 'dragon', 'dresser', 'drill', 'drums',
+ 'duck', 'dumbbell', 'ear', 'elbow', 'elephant', 'envelope', 'eraser', 'eye', 'eyeglasses', 'face', 'fan', 'feather', 
+'fence', 'finger', 'fire hydrant', 'fireplace', 'firetruck', 'fish', 'flamingo', 'flashlight', 'flip flops', 'floor lamp', 
+'flower', 'flying saucer', 'foot', 'fork', 'frog', 'frying pan', 'garden', 'garden hose', 'giraffe', 'goatee', 
+'golf club', 'grapes', 'grass', 'guitar', 'hamburger', 'hammer', 'hand', 'harp', 'hat', 'headphones', 'hedgehog', 
+'helicopter', 'helmet', 'hexagon', 'hockey puck', 'hockey stick', 'horse', 'hospital', 'hot air balloon', 'hot dog', 
+'hot tub', 'hourglass', 'house', 'house plant', 'hurricane', 'ice cream', 'jacket', 'jail', 'kangaroo', 'key', 
+'keyboard', 'knee', 'ladder', 'lantern', 'laptop', 'leaf', 'leg', 'light bulb', 'lighthouse', 'lightning', 'line', 
+'lion', 'lipstick', 'lobster', 'lollipop', 'mailbox', 'map', 'marker', 'matches', 'megaphone', 'mermaid', 'microphone', 
+'microwave', 'monkey', 'moon', 'mosquito', 'motorbike', 'mountain', 'mouse', 'moustache', 'mouth', 'mug', 
+'mushroom', 'nail', 'necklace', 'nose', 'ocean', 'octagon', 'octopus', 'onion', 'oven', 'owl', 'paint can', 'paintbrush', 
+'palm tree', 'panda', 'pants', 'paper clip', 'parachute', 'parrot', 'passport', 'peanut', 'pear', 'peas', 'pencil', 
+'penguin', 'piano', 'pickup truck', 'picture frame', 'pig', 'pillow', 'pineapple', 'pizza', 'pliers', 'police car', 
+'pond', 'pool', 'popsicle', 'postcard', 'potato', 'power outlet', 'purse', 'rabbit', 'raccoon', 'radio', 'rain', 
+'rainbow', 'rake', 'remote control', 'rhinoceros', 'river', 'roller coaster', 'rollerskates', 'sailboat', 'sandwich', 
+'saw', 'saxophone', 'school bus', 'scissors', 'scorpion', 'screwdriver', 'sea turtle', 'see saw', 'shark', 'sheep', 
+'shoe', 'shorts', 'shovel', 'sink', 'skateboard', 'skull', 'skyscraper', 'sleeping bag', 'smiley face', 
+'snail', 'snake', 'snorkel', 'snowflake', 'snowman', 'soccer ball', 'sock', 'speedboat', 'spider', 'spoon', 'spreadsheet', 
+'square', 'squiggle', 'squirrel', 'stairs', 'star', 'steak', 'stereo', 'stethoscope', 'stitches', 'stop sign', 
+'stove', 'strawberry', 'streetlight', 'string bean', 'submarine', 'suitcase', 'sun', 'swan', 'sweater', 'swing set', 
+'sword', 't-shirt', 'table', 'teapot', 'teddy-bear', 'telephone', 'television', 'tennis racquet', 'tent', 'The Eiffel Tower', 
+'The Great Wall of China', 'The Mona Lisa', 'tiger', 'toaster', 'toe', 'toilet', 'tooth', 'toothbrush', 
+'toothpaste', 'tornado', 'tractor', 'traffic light', 'train', 'tree', 'triangle', 'trombone', 'truck', 'trumpet', 
+'umbrella', 'underwear', 'van', 'vase', 'violin', 'washing machine', 'watermelon', 'waterslide', 'whale', 'wheel', 
+'windmill', 'wine bottle', 'wine glass', 'wristwatch', 'yoga', 'zebra', 'zigzag']
 
 BASE_SIZE = 256
 NCSVS = 100
@@ -58,56 +92,64 @@ def f2cat(filename: str) -> str:
     return filename.split('.')[0]
 
 def list_all_categories():
-    files = os.listdir(os.path.join(INPUT_DIR, 'train_simplified'))
-    return sorted([f2cat(f) for f in files], key=str.lower)
+    return cats
 
-print(list_all_categories())
+STEPS = 1000
+EPOCHS = 16
+size = 64
+batchsize = 256
 
-# STEPS = 1000
-# EPOCHS = 16
-# size = 64
-# batchsize = 256
+base_model = DenseNet121(include_top=False, weights=None,
+                         input_shape=(size, size, 3), classes=NCATS)
 
-# base_model = DenseNet121(include_top=False, weights=None,
-#                          input_shape=(size, size, 3), classes=NCATS)
+x = base_model.output
+x = GlobalAveragePooling2D()(x)
+x = Dense(1024, activation='relu')(x)
+predictions = Dense(NCATS, activation='softmax')(x)
+model = Model(inputs=base_model.input, outputs=[x, predictions])
+model.load_weights("dense121_back.h5")
 
-# x = base_model.output
-# x = GlobalAveragePooling2D()(x)
-# x = Dense(1024, activation='relu')(x)
-# predictions = Dense(NCATS, activation='softmax')(x)
-# model = Model(inputs=base_model.input, outputs=[x, predictions])
-# model.load_weights("/Users/justryit/Desktop/dense121_back.h5")
+# model.compile(optimizer=Adam(lr=1e-4, decay=1e-9), loss='categorical_crossentropy', metrics=[
+#               categorical_crossentropy, categorical_accuracy, top_3_accuracy])
 
-# # model.compile(optimizer=Adam(lr=1e-4, decay=1e-9), loss='categorical_crossentropy', metrics=[
-# #               categorical_crossentropy, categorical_accuracy, top_3_accuracy])
+print(model.summary())
 
-# print(model.summary())
-
-# def readimage(img_path, size=64):
-#     img = cv2.imread(img_path)
-#     x = np.zeros((1, size, size, 3))
-#     x[0, :, :, :] = cv2.resize(img, (size, size))
-#     x = preprocess_input(x).astype(np.float32)
-#     return x
+def readimage(img_path, size=64):
+    img = cv2.imread(img_path)
+    x = np.zeros((1, size, size, 3))
+    x[0, :, :, :] = cv2.resize(img, (size, size))
+    x = preprocess_input(x).astype(np.float32)
+    return x
 
 # IMAGE_FILE = '3.png'
 
-# # test = pd.read_csv(os.path.join(INPUT_DIR, 'test_simplified.csv'))
-# # test.head()
-# # x_test = df_to_image_array_xd(test, size)
-# # print(test.shape, x_test.shape)
-# # print('Test array memory {:.2f} GB'.format(x_test.nbytes / 1024.**3 ))
+# test = pd.read_csv(os.path.join(INPUT_DIR, 'test_simplified.csv'))
+# test.head()
+# x_test = df_to_image_array_xd(test, size)
+# print(test.shape, x_test.shape)
+# print('Test array memory {:.2f} GB'.format(x_test.nbytes / 1024.**3 ))
 
-# x_test = readimage(IMAGE_FILE)
-# hidden, test_predictions = model.predict(x_test, batch_size=1, verbose=1)
+DIR = './image_orig'
+ODIR = './image_process'
 
 
-# incat = 'book'
+cats = list_all_categories()
+id2cat = {k: cat.replace(' ', '_') for k, cat in enumerate(cats)}
+cat2id = {cat: k for k, cat in enumerate(cats)}
 
-# cats = list_all_categories()
-# id2cat = {k: cat.replace(' ', '_') for k, cat in enumerate(cats)}
-# cat2id = {cat: k for k, cat in enumerate(cats)}
-# print(cat2id[incat])
 
-# print(test_predictions[0])
-# print(hidden[0])
+for _, dirs, _ in os.walk(DIR):
+    for name in sorted(dirs):
+        print('Reading from ' + name)
+        os.makedirs(os.path.join(ODIR, name))
+        for __, __, files in os.path.join(DIR, name):
+            hiddenarray = []
+            for filename in sorted(files):
+                x_test = readimage(os.path.join(ODIR, name, filename))
+                hidden, test_predictions = model.predict(x_test, batch_size=1, verbose=1)
+                print(cat2id[name])
+                if test_predictions[0][cat2id[name]] > 0.9:
+                    copyfile(os.path.join(DIR, name, filename), os.path.join(ODIR, name, filename))
+                hiddenarray.append(hidden[0])
+            with open(os.path.join(ODIR, name, 'hidden.txt')) as f:
+                f.write(hiddenarray)
