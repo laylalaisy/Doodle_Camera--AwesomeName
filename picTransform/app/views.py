@@ -67,8 +67,8 @@ def splitBox(objectList):
             w3 = width
             h3 = height / 2
             headTuple = (x, y1, w1, h1)
-            bodyTuple = (x, y2, w2, h2)
-            legTuple = (x, y3, w3, h3)
+            bodyTuple = (x, y2, w2, h2 * 1.5)
+            legTuple = (x, y3, w3, h3 * 1.5)
             head = ['face', 0.9, headTuple]
             body = ['t-shirt', 0.9, bodyTuple]
             leg = ['pants', 0.9, legTuple]
@@ -88,8 +88,6 @@ def splitBox(objectList):
             order += 1
     return (box, objectList)
 
-DOODLENUM = 1000
-
 def generateDoodle(label, photo_filename, width, height):
     basepath = os.path.dirname(__file__)
     doodle_foldername = basepath + "/ndjson/image_orig/"+label+"/"
@@ -106,6 +104,10 @@ def generateDoodle(label, photo_filename, width, height):
             # find similar doodle
             photo_hash = imagehash.average_hash(Image.open(photo_filename))
             min_dist = float('inf')
+            if(label == "face" || label == "pants" || label == "t-shirt" || label == "bench" || label == "bicycle" || label == "cup" || label == "fork" || label == "toilet" || label == "cat" || label == "dot" || label == "cake" || label == "horse"):
+                DOODLENUM = 10
+            else:
+                DOODLENUM = 1000
             for i in range(DOODLENUM):
                 doodle_hash = imagehash.average_hash(Image.open(doodle_foldername+str(i)+'.png'))
                 dist = photo_hash - doodle_hash
@@ -163,10 +165,10 @@ def joinBox(objectList):
             print(str(obj[0]))
             order += 1
             continue
-        kernel = numpy.ones((5,5), numpy.uint8)
-        emptyImg = cv2.dilate(emptyImg, kernel, iterations=2)
-        cv2.imwrite(basepath+"/static/images/join.jpg", emptyImg)
         order += 1
+    kernel = numpy.ones((10,10), numpy.uint8)
+    emptyImg = cv2.erode(emptyImg, kernel, iterations=1)
+    cv2.imwrite(basepath+"/static/images/join.jpg", emptyImg)
 
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'JPG', 'PNG', 'bmp'])
 def allowed_file(filename):
