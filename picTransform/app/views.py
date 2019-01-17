@@ -8,6 +8,7 @@ import numpy
 import sys
 from PIL import Image
 import imagehash
+import shutil
 
 # import sys
 # sys.path.append('/home/rongxie_sx/AwesomeName/picTransform/app/darknet/python/')
@@ -17,15 +18,15 @@ from .darknet.python import darknet as dn
 #import darknet.python.darknet as dn
 
 
-def detection(image):
-    basepath = os.path.dirname(__file__)
-    final_path = os.path.join(basepath, 'darknet')
-    dn.set_gpu(0)
-    net = dn.load_net(str.encode(final_path+"/cfg/yolov3.cfg"),
-                  str.encode(final_path+"/yolov3.weights"), 0)
-    meta = dn.load_meta(str.encode(final_path+"/cfg/coco.data"))
-    # meta = dn.load_meta(str.encode(final_path+"/cfg/combine9k.data"))
+basepath = os.path.dirname(__file__)
+final_path = os.path.join(basepath, 'darknet')
+dn.set_gpu(0)
+net = dn.load_net(str.encode(final_path+"/cfg/yolov3.cfg"),
+                str.encode(final_path+"/yolov3.weights"), 0)
+meta = dn.load_meta(str.encode(final_path+"/cfg/coco.data"))
+# meta = dn.load_meta(str.encode(final_path+"/cfg/combine9k.data"))
 
+def detection(image):
     res = dn.detect(net, meta, str.encode(basepath+"/static/images/"+image))
     return res
 
@@ -93,9 +94,11 @@ def generateDoodle(label, photo_filename, width, height):
     basepath = os.path.dirname(__file__)
     doodle_foldername = basepath + "/ndjson/image_orig/"+label+"/"
     firstimg = doodle_foldername + "0.png"
+    print("firstimg:" + firstimg)
     try:
         with open(firstimg, "r") as f:
             # resize photo
+            print("##exist##")
             photo = cv2.imread(photo_filename,0)
             photo_resize = cv2.resize(photo, (256, 256), interpolation=cv2.INTER_CUBIC)
             cv2.imwrite(photo_filename, photo_resize)
@@ -109,8 +112,7 @@ def generateDoodle(label, photo_filename, width, height):
                 if min_dist > dist:
                     min_dist = dist
                     min_idx = i
-            print(min_dist)
-            print(doodle_foldername+str(min_idx)+'.png')
+            print('output_doodle:' + doodle_foldername+str(min_idx)+'.png')
 
             # input original image
             img_orig = cv2.imread(doodle_foldername+str(min_idx)+'.png',0)
@@ -124,6 +126,7 @@ def generateDoodle(label, photo_filename, width, height):
             # plt.imshow(img_resize,cmap = 'gray')
             # plt.show()
     except Exception as e:
+        print("##Not Exist##")
         os.remove(photo_filename)
         return
 
@@ -150,7 +153,18 @@ def joinBox(objectList):
         yBottom = round(y+0.5*height)
         xLeft = round(x-0.5*width)
         xRight = round(x+0.5*width)
-        emptyImg[yUp : yBottom, xLeft : xRight] = cv2.resize(subImg, (xRight-xLeft, yBottom-yUp))
+        try:
+            todoimg = cv2.resize(subImg, (xRight-xLeft, yBottom-yUp))
+            for i in range(yUp, yBottom):
+                for j in range(xLeft, xRight):
+                    if min(todoimg[i - yUp][j - xLeft]) != 255: 
+                        emptyImg[i, j] = todoimg[i - yUp][j - xLeft]
+        except Exception as e:
+            print(str(obj[0]))
+            order += 1
+            continue
+        kernel = numpy.ones((5,5), numpy.uint8)
+        emptyImg = cv2.dilate(emptyImg, kernel, iterations=2)
         cv2.imwrite(basepath+"/static/images/join.jpg", emptyImg)
         order += 1
 
@@ -162,15 +176,16 @@ app.send_file_max_age_default = timedelta(seconds=1)
 @app.route('/')
 @app.route('/index', methods = ['GET', 'POST'])
 
+
 def index():
     if request.method == 'POST':
-        
+        basepath = os.path.dirname(__file__)
+
         f = request.files['file']
  
         if not (f and allowed_file(f.filename)):
             return jsonify({"error": 1001, "msg": "Please check picture form (png, PNG, jpg, JPG and bmp are allowed.)"})
 
-        basepath = os.path.dirname(__file__)
         upload_path = os.path.join(basepath, 'static/images', secure_filename(f.filename))
         f.save(upload_path)
         img = cv2.imread(upload_path)
