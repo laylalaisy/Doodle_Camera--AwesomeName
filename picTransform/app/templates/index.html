@@ -1,11 +1,46 @@
 {% extends "base.html" %}
 {% block content %}
-    <body>
-        <h1 align="center">Welcome to Doodle Camera</h1>
-        <h3 align="center">Please upload your picture :)</h3>
-        <form align="center" action="" enctype='multipart/form-data' method='POST'>
-            <input type="file" name="file" style="margin-top:20px;"/>
-            <input type="submit" value="Upload" class="button-new" style="margin-top:15px;"/>
+    <body style="background-color: #ffffff">
+        <form id="form" align="center" action="" enctype='multipart/form-data' method='POST'>
+        <div>
+            <div>
+            <div style="position:absolute; top:20vh; text-align:center; left:0px; right:0px">
+                <img
+                    style="width:90%; position:absolute; left:0; right:0; margin-left:auto; margin-right:auto; top:50%; margin-top:-50px"
+                    src="{{ url_for('static', filename= './icons/DoodleCamera.png') }}"
+                ></img>
+            </div>
+            <div style="position:absolute; top:35vh; text-align:center; left:0px; right:0px; overflow: hidden;">
+
+                <div style="position:relative; width:150px; height: 150px; text-align:center;left:0; right:0; margin-left:auto; margin-right:auto; border-radius:50%; border:6px solid #dddddd; box-shadow:5px 15px 10px #dddddd">
+                    <input style="position:absolute; height:150px; width:150px; opacity: 0; z-index: 3; top:0; text-align:center; left:0px;font-size: 100px" id="file" type="file" name="file" accept="image/*">
+                <img
+                    style="width: 75px; height: 75px; position:absolute; left:0; right:0; margin-left:auto; margin-right:auto; top:50%; margin-top:-37.5px"
+                    src="{{ url_for('static', filename= './icons/camera.png') }}"
+                ></img>
+                </div>
+                <div style="padding-top:40px">
+                <!-- <text style="font-weight:200;" >  Take A Picture </text> -->
+                </div>
+            </div>
+        
+            <div style="position:absolute; bottom:0; text-align:center; left:0px; right:0px">
+                <img style="width:100%; margin:0"
+                src="{{ url_for('static', filename= './icons/doodlebottom.png') }}">
+                </img>
+            </div>
+            </div>
+        </div>
+        <!-- <h1 align="center">Welcome to Doodle Camera</h1>
+        <h3 align="center">Please upload your picture :)</h3> -->
+            <!-- <input type="file" name="file" style="margin-top:20px;"/> -->
+            <!-- <input type="submit" value="Upload" class="button-new" style="margin-top:15px;"/> -->
         </form>
+    <script>
+        document.getElementById("file").onchange = function() {
+            console.log('F')
+            document.getElementById("form").submit();
+        };
+    </script>
     </body>
 {% endblock %}
