@@ -8,6 +8,7 @@ import numpy
 import sys
 from PIL import Image
 import imagehash
+import shutil
 
 # import sys
 # sys.path.append('/home/rongxie_sx/AwesomeName/picTransform/app/darknet/python/')
@@ -150,7 +151,11 @@ def joinBox(objectList):
         yBottom = round(y+0.5*height)
         xLeft = round(x-0.5*width)
         xRight = round(x+0.5*width)
-        emptyImg[yUp : yBottom, xLeft : xRight] = cv2.resize(subImg, (xRight-xLeft, yBottom-yUp))
+        try:
+            emptyImg[yUp : yBottom, xLeft : xRight] = cv2.resize(subImg, (xRight-xLeft, yBottom-yUp))
+        except Exception as e:
+            order += 1
+            continue
         cv2.imwrite(basepath+"/static/images/join.jpg", emptyImg)
         order += 1
 
@@ -164,13 +169,13 @@ app.send_file_max_age_default = timedelta(seconds=1)
 
 def index():
     if request.method == 'POST':
-        
+        basepath = os.path.dirname(__file__)
+
         f = request.files['file']
  
         if not (f and allowed_file(f.filename)):
             return jsonify({"error": 1001, "msg": "Please check picture form (png, PNG, jpg, JPG and bmp are allowed.)"})
 
-        basepath = os.path.dirname(__file__)
         upload_path = os.path.join(basepath, 'static/images', secure_filename(f.filename))
         f.save(upload_path)
         img = cv2.imread(upload_path)
