@@ -163,7 +163,7 @@ def joinBox(objectList):
             print(str(obj[0]))
             order += 1
             continue
-        kernel = np.ones((5,5), np.uint8)
+        kernel = numpy.ones((5,5), numpy.uint8)
         emptyImg = cv2.dilate(emptyImg, kernel, iterations=2)
         cv2.imwrite(basepath+"/static/images/join.jpg", emptyImg)
         order += 1
