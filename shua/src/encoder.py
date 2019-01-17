@@ -141,15 +141,17 @@ cat2id = {cat: k for k, cat in enumerate(cats)}
 for _, dirs, _ in os.walk(DIR):
     for name in sorted(dirs):
         print('Reading from ' + name)
-        os.makedirs(os.path.join(ODIR, name))
-        for __, __, files in os.path.join(DIR, name):
-            hiddenarray = []
-            for filename in sorted(files):
-                x_test = readimage(os.path.join(ODIR, name, filename))
-                hidden, test_predictions = model.predict(x_test, batch_size=1, verbose=1)
-                print(cat2id[name])
-                if test_predictions[0][cat2id[name]] > 0.9:
-                    copyfile(os.path.join(DIR, name, filename), os.path.join(ODIR, name, filename))
-                hiddenarray.append(hidden[0])
-            with open(os.path.join(ODIR, name, 'hidden.txt')) as f:
-                f.write(hiddenarray)
+        if not os.path.exists(os.path.join(ODIR, name)):
+            os.makedirs(os.path.join(ODIR, name))
+            for __, __, files in os.walk(os.path.join(DIR, name)):
+                hiddenarray = []
+                for filename in sorted(files):
+                    x_test = readimage(os.path.join(DIR, name, filename))
+                    hidden, test_predictions = model.predict(x_test, batch_size=1, verbose=1)
+                    print(cat2id[name])
+                    print(test_predictions[0][cat2id[name]])
+                    if test_predictions[0][cat2id[name]] > 0.9:
+                        copyfile(os.path.join(DIR, name, filename), os.path.join(ODIR, name, filename))
+                    hiddenarray.append(hidden[0])
+                with open(os.path.join(ODIR, name, 'hidden.txt')) as f:
+                    f.write(hiddenarray)
