@@ -170,7 +170,7 @@ def joinBox(objectList):
     emptyImg = cv2.erode(emptyImg, kernel, iterations=1)
     cv2.imwrite(basepath+"/static/images/join.jpg", emptyImg)
 
-ALLOWED_EXTENSIONS = set(['png', 'jpg', 'JPG', 'PNG', 'bmp'])
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'JPG', 'PNG', 'bmp','jpeg','JPEG', 'BMP'])
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 app.send_file_max_age_default = timedelta(seconds=1)
