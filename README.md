@@ -75,7 +75,7 @@ To select suitable images, we firstly store the feature maps of doodle images fr
 
 We thank Google for holding this AI ML Winter Camp, where Google provided comfortable workplace, cloud server, delicious lunch and teabreaks. 
 
-Thanks to Google's awesome HR team, especially Manyi, Queenie, Irene, Jemi, Helen and Brett for their great work. 
+Thanks to Google's awesome HR team, especially Manyi, Queenie, Irene, Helen, Brett and Jemi for their great work. 
 
 Thanks to Google's speakers and engineers for their in-depth lecture and strong support.
 
