@@ -2,8 +2,6 @@
 
 This project is developed by Awesome Name team in less than 4 days during the Google AI ML WinterCamp Shanghai.
 
-<img src="https://github.com/laylalaisy/Doodle_Camera--AwesomeName/raw/master/doodlecamera.png" width="700"/>
-
 <img src="https://github.com/laylalaisy/Doodle_Camera--AwesomeName/raw/master/phone.png" width="200"/>
 
 Using Doodle Camera, you can transfer your daily photos into the 'ugly but cute' doodle style, where the doodle images are drawn by real humans.
