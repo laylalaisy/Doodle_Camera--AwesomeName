@@ -8,11 +8,14 @@ Using Doodle Camera, you can transfer your daily photos into the 'ugly but cute'
 
 Video Demo [Here][video].
 
+Online Demo [Here][demo]. (Server is Down)
+
 Presentation Slides [Here][presentation].
 
 Poster [Here][poster].
 
 [video]: https://drive.google.com/file/d/1kOy6MtoV0b7BqVu6PDHgSA5XepzeqVLx/view
+[demo]: http://165.227.22.95/index
 [presentation]: https://docs.google.com/presentation/d/1j50bNXnlmWNMyljWRQDWrnEB-gHcQ4TBbbPqAnHsDx8/edit#slide=id.p1
 [poster]: https://docs.google.com/presentation/d/1Cey5EeBEdEqRYktxKW8tOywhIxM0poXg36-HQU4ueUc/edit?usp=sharing
 
