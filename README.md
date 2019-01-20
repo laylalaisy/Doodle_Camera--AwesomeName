@@ -43,7 +43,7 @@ As mentioned in PPT , there are three key challenges in our project and I will s
 
 **Code related to training the classifier is under the cky branch.**
 
-We firstly focus on training a classifier on the Google QuickDRAW Dataset, because if we have a robust classifier, we can gain an understanding of doodle images, which can help us filter images that are not recognizable, and help us select suitable doodle images. So I will firstly talk about how we train a classifier and how we achieve top 12% on the Kaggle Competition.
+We firstly focus on training a classifier on the Google QuickDRAW Dataset, because if we have a robust classifier, we can gain an understanding of doodle images, which can help us filter images that are not recognizable, and help us select suitable doodle images. So we will firstly talk about how we train a classifier and how we achieve top 12% on the Kaggle Competition.
 
 For an image classification task, we naturally think about using a convolutional network like ResNet or DenseNet. An essential problem is how we generate the images. The Google QuickDRAW dataset contains the information of how people draw the doodle image, specifically, the timestamps for every stroke of the drawing. To utilize the time data, we colorize images according to the timestamps of strokes. For example, the butterfly shown below, the person firstly draws its wings, which is marked in red, and then draws its wings, which is marked in black.
 
@@ -67,7 +67,7 @@ To recall, we need to select recognizable images, and suitable images.
 
 To select recognizable images, we assume that the images that are easy to recognize for models are also somehow easy to recognize for humans, so we select top 100 doodle images according to the model's probability from each class and it seems to be working well. 
 
-To select suitable images, we firstly store the feature maps of doodle images from the dataset, and once we get an object image after the object detection process, we use the Euclidean distance in feature space to find the most similar doodle image. One essential problem is that the image after object detection is from real world, where the style is totally different from the doodle images in the dataset. So before we feed the object image to the classifier, we use canny edge detection to first convert the real image to lines and edges, which is much similar to the doodle style. We also use a perceptual hash algorithm when the first solution can not find a suitable image.
+To select suitable images, we firstly store the feature maps of doodle images from the dataset, and once we get an object image after the object detection process, we use the Euclidean distance in feature space to find the most similar doodle image. One essential problem is that the image after object detection is from real world, where the style is totally different from the doodle images in the dataset. So before we feed the object image to the classifier, we use canny edge detection to first convert the real image to lines and edges, which is much similar to the doodle style. We also use a perceptual hash algorithm when the first solution cannot find a suitable image.
 
 </br>
 
